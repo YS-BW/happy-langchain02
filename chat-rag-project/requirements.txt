@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+langchain
+langchain-ollama
+langchain-chroma
+langchain-community
+chromadb
+pydantic
+python-dotenv
+# 高级文档加载支持
+pypdf
+unstructured
