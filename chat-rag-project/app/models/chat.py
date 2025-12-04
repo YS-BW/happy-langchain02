@@ -9,5 +9,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     """API响应体:用于返回模型生成的回答"""
     answer: str = Field(..., description="模型生成的回答")
-    source_docs: list[str] = Field(..., description="来源文档")
+    source_documents: list[str] = Field(..., description="来源文档")
+class RAGInput(BaseModel):
+    question: str = Field(..., description="用户提出的，需要从内部知识库中检索信息来回答的问题")
     
