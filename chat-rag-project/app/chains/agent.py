@@ -19,12 +19,13 @@ tools = [
 ]
 
 # --- 2. 定义 Agent 提示词模板 ---
-AGENT_PROMPT = "你是一个万能助理。你的主要目标是准确回答用户的问题。你应该首先尝试使用 rag_tool来回答关于你内部知识或项目细节的问题。如果问题是关于实时或外部世界的，请使用其他可用的工具。请严格遵循 Thought/Action/Action Input/Observation 格式进行思考。"
+AGENT_PROMPT = "你是一个万能助理。你的主要目标是准确回答用户的问题。你应该首先尝试使用 rag_tool来回答关于你内部知识或项目细节的问题。如果问题是关于实时或外部世界的，请使用其他可用的工具。请严格遵循 Thought/Action/Action Input/Observation 格式进行思考。回复时应该尽可能多用emoji"
 
 # --- 3. 初始化 LLM ---
 # 使用 DeepSeek Chat 模型，它具有较好的指令遵循能力
 LLM =  ChatDeepSeek(
     model="deepseek-chat",
+    streaming=True,
 )
 
 
@@ -34,8 +35,8 @@ def get_agent():
     # 步骤 A: 使用 create_react_agent 创建 Agent Chain
     agent = create_agent(
         model=LLM, 
-        tools=tools, 
+        #tools=tools, 
         system_prompt=AGENT_PROMPT,
-        response_format=ToolStrategy(ChatResponse)
+        #response_format=ToolStrategy(ChatResponse)
     )
     return agent

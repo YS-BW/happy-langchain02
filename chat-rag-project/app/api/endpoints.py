@@ -1,25 +1,31 @@
 # FastAPI 路由层：处理 HTTP 请求和响应
+import re
 from fastapi import APIRouter
 from app.models.chat import ChatRequest, ChatResponse
 from app.chains.agent import get_agent
+from fastapi.responses import StreamingResponse
+import json
+from langchain_core.messages import AIMessage,ToolMessage
+import asyncio
 router = APIRouter()
 AGENT = get_agent()
 
 
-@router.post("/chat",response_model=ChatResponse)
-async def chat_endpoint(request: ChatRequest):
-    """
-    接收用户问题,Agent 决定使用 RAG Tool 或其他工具来回答。
-    """
+@router.post("/chat-stream")
+async def chat_stream_endpoint(request: ChatRequest):
 
-    
-    result = await AGENT.ainvoke({"messages": [{"role": "user", "content": request.question}]})
-    
-   
-    return result['structured_response']
+    async_gen = AGENT.astream({"messages": [{"role": "user", "content": request.question}]}, stream_mode="values")
 
+    async def event_generator():
 
-   
+        async for chunk in async_gen:
+            # 遍历 chunk 中的所有消息
+                msg = chunk["messages"][-1]
+                # 只打印 AIMessage
+                if msg.__class__.__name__ == "AIMessage":
+                    if msg.content:  # 避免空消息
+                        yield msg.content
+                        await asyncio.sleep(0.05)
+            
 
-
-    
+    return StreamingResponse(event_generator(), media_type="text/plain")
