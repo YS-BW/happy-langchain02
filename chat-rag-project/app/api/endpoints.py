@@ -21,7 +21,7 @@ async def chat_stream_endpoint(request: ChatRequest):
         async for chunk in async_gen:
             # 遍历 chunk 中的所有消息
                 msg = chunk["messages"][-1]
-                # 只打印 AIMessage
+            
                 if msg.__class__.__name__ == "AIMessage":
                     if msg.content:  # 避免空消息
                         yield msg.content
